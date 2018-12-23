@@ -24,36 +24,37 @@ RECIPIENT = "victor.grenu@gmail.com"
 #If necessary, replace us-west-2 with the AWS Region you're using for Amazon SES.
 AWS_REGION = "eu-west-1"
 
-#The subject line for the email.
+# Subject line for the email.
 SUBJECT = "Alfred Backup Failed"
 
-#The email body for recipients with non-HTML email clients.
+# Email body for recipients with non-HTML email clients.
 BODY_TEXT = ("Alert - Warning\r\n"
              "Jeedom Backup Failed"
              "Alfred"
             )
             
-#The HTML body of the email.
+# HTML body of the email.
 BODY_HTML = """<html>
 <head></head>
 <body>
-  <h1>Alfred Backup</h1>
-  <p>The backup failed today</p>
-  <p>
+  <h1>Alfred Jeedom Backup</h1>
+  <p>Jeedom backup failed today</p>
+  <p>The file is not present on S3</p>
+  <p>Alfred</p>
 </body>
 </html>
             """            
 
-#The character encoding for the email.
+# Character encoding for the email.
 CHARSET = "UTF-8"
 
-#Create a new SES resource and specify a region.
+# Create a new SES resource and specify a region.
 client = boto3.client('ses',region_name=AWS_REGION)
 
-#Get Today's date
+# Get Today's date
 today = datetime.date.today()
 
-#Get Objects date
+# Get Objects date
 s3 = boto3.resource('s3',region_name=AWS_REGION)
 bucket = s3.Bucket('zoph.backup')
 objs = bucket.objects.filter(Prefix='Jeedom').limit(1)
@@ -66,14 +67,14 @@ except botocore.exceptions.ClientError as e:
     if error_code == '404':
         exists = False
 
-#Compare with defined date
+# Compare with defined date
 if today == lastobjectdate:
     print("OK")
 else:
-    #SES Notification
-    #Try to send the email.
+    # SES Notification
+    # Try to send the email.
     try:
-    #Provide the contents of the email.
+    # Provide the contents of the email.
         response = client.send_email(
             Destination={
                 'ToAddresses': [
