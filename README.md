@@ -1,6 +1,8 @@
 # S3 Monitor
 
-S3 Monitor intend to check the last object(key) creation date in S3, and if its older than defined date, send email alerting.
+S3 Monitor intend to check the  last object(key) last_modified date in S3, and if its older than today, send alerting email.
+
+I'm using this to monitor my effective backup of Jeedom.
 
 ## Technical details
 
