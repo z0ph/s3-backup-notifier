@@ -67,7 +67,7 @@ except botocore.exceptions.ClientError as e:
         exists = False
 
 #Compare with defined date
-if today != lastobjectdate:
+if today == lastobjectdate:
     print("OK")
 else:
     #SES Notification
