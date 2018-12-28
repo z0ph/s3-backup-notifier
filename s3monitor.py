@@ -1,11 +1,7 @@
-import time
 import boto3
 from botocore.exceptions import ClientError
 import botocore
-from datetime import datetime
 import datetime
-from time import mktime
-from dateutil.parser import parse
 
 # Email Setting (SES)
 # Replace sender@example.com with your "From" address.
@@ -59,21 +55,29 @@ s3 = boto3.resource('s3',region_name=AWS_REGION)
 bucket = s3.Bucket('zoph.backup')
 objs = bucket.objects.filter(Prefix='Jeedom').limit(1)
 
+
 def get_object_check_alarm():
     try:
         for obj in objs:
+            print(obj)
             lastobjectdate = (obj.last_modified).date()
     except botocore.exceptions.ClientError as e:
         error_code = e.response['Error']['Code']
         if error_code == '404':
-            print("There is not file")
+            print("There is no file")
 
     # Compare with defined date
     if today == lastobjectdate:
-        print("OK, lasted file comes from today")
+        print(today)
+        print(lastobjectdate)
+        print("OK, lastest file comes from today")
     else:
+        print(today)
+        print(lastobjectdate)
+        print("Mail sent")
         # SES Notification
         # Try to send the email.
+        '''
         try:
         # Provide the contents of the email.
             response = client.send_email(
@@ -110,9 +114,13 @@ def get_object_check_alarm():
             print("Email sent! Message ID:"),
             print(response['MessageId'])
             print ("KO, file is too old, sending alert email")
+        '''
 
-def main(event, context):
+
+def main():
     get_object_check_alarm()
 
-# Run locally    
-main(0,0) # only for pp
+# Run locally
+
+
+main()# only for testing purpose
