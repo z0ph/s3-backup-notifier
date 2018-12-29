@@ -1,13 +1,13 @@
 # S3 Monitor
 
-S3 Monitor intend to check the last object (s3 key) with last_modified date in AWS S3, and if its older than today, send alerting email.
+S3 Monitor intend to check the last object date in AWS S3 bucket, and if its older than today, send alerting email via AWS Simple Email Service (SES).
 
-I'm using this to monitor my effective backup of Jeedom.
+I'm using this to monitor my effective backup of my domotics system and be alerted if any issue.
 
 ## Technical details
 
-* Uses AWS Lambda function (Python)
-* Scheduled (daily) with cron
+* Uses AWS Lambda function (Python 3)
+* Scheduled Lambda (daily) with CloudWatch Events
 * Uses AWS Simple Email Service (SES) for Emails Notifications
 
 ## Documentation
