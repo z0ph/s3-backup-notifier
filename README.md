@@ -25,7 +25,7 @@ $ make package
 ### Deploy
 
 ```bash
-$ make deploy env=<you_env>
+$ make deploy env=<your_env>
 ```
 
 ### Cleaning
