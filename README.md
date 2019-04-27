@@ -2,11 +2,12 @@
 
 S3 Monitor intend to check the last object date in AWS S3 bucket, and if its older than today, send alerting email via AWS Simple Email Service (SES).
 
-I'm using this to monitor my effective backup of my domotics system and be alerted on any issue.
+I'm using this to monitor my effective backup of my home automation system and be alerted on any backup issue.
 
 ## Technical details
 
-* Uses AWS Lambda function (Python 3)
+* Uses AWS Lambda function (Python 2.7)
+* Rely on AWS Lambda layer for boto3 and botocore
 * Scheduled Lambda (daily) with CloudWatch Events
 * Uses AWS Simple Email Service (SES) for Emails Notifications
 
@@ -17,25 +18,19 @@ Using [AWS Serverless Application Model (SAM)](https://github.com/awslabs/server
 ### Build
 
 ```bash
-blablabla
-```
-
-### Package
-
-```bash
-sam package \
-    --template-file path/sam-s3monitor.yml \
-    --output-template-file s3monitor.yml \
-    --s3-bucket s3-bucket-name
+$ make layer
+$ make package
 ```
 
 ### Deploy
 
 ```bash
-sam deploy \
-    --template-file s3monitor.yml \
-    --stack-name s3-monitor \
-    --capabilities CAPABILITY_IAM
+$ make deploy env=<you_env>
+```
+
+### Cleaning
+```bash
+$ make cleaning
 ```
 
 ## Documentation
@@ -43,3 +38,4 @@ sam deploy \
 * [last_modified s3 with Python](https://stackoverflow.com/questions/9679344/how-can-i-get-last-modified-datetime-of-s3-objects-with-boto)
 * [Using SES with Python](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/send-using-sdk-python.html)
 * [Boto3 - S3](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/migrations3.html)
+* [SAM documentation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-template.html#serverless-sam-template-function)
