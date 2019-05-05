@@ -16,11 +16,11 @@ Resources:
       FunctionName: !Sub s3-monitor-${env}
       Description: Monitoring for S3 (Backups Jeedom)
       Handler: handlers.main
-      Runtime: python2.7
+      Runtime: python3.7
       CodeUri: ./build
       MemorySize: 128
       Timeout: 30
-      Layers: 
+      Layers:
         - !Ref boto3layer
       Policies:
         - AWSLambdaExecute # Managed Policy
@@ -30,6 +30,10 @@ Resources:
               Action:
               - s3:List*
               Resource: 'arn:aws:s3:::zoph.backup'
+            - Effect: Allow
+              Action:
+                - ses:SendEmail
+              Resource: '*'
       Events:
         Timer:
           Type: Schedule
@@ -46,5 +50,7 @@ Resources:
       ContentUri: ./layer
       CompatibleRuntimes:
         - python2.7
+        - python3.6
+        - python3.7
       LicenseInfo: 'Available under the MIT-0 license.'
       RetentionPolicy: Retain

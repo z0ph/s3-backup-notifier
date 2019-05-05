@@ -1,87 +1,86 @@
+
 import datetime
-
 import boto3
-
 import botocore
-
 from botocore.exceptions import ClientError
+
+# Config
+bucker_name = "zoph.backup"
+s3_prefix = "Jeedom"
 
 # Get Today's date
 today = datetime.date.today()
-todaystr = str(today)
 
+# AWS Connection
 AWS_REGION = "eu-west-1"
+session = boto3.Session(region_name=AWS_REGION)
+s3 = session.resource('s3')
+ses = session.client('ses')
 
-# Create a new SES resource and specify a region.
-client = boto3.client('ses', region_name=AWS_REGION)
+bucket = s3.Bucket(bucker_name)
+objs = bucket.objects.filter(Prefix=s3_prefix).all()
 
-# Get Objects date
-s3 = boto3.resource('s3', region_name=AWS_REGION)
-bucket = s3.Bucket('zoph.backup')
-objs = bucket.objects.filter(Prefix='Jeedom').all()
-
+# Convert to Human Readable
+def sizeof_fmt(num, suffix='B'):
+    for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
+        if abs(num) < 1024.0:
+            return "%3.1f%s%s" % (num, unit, suffix)
+        num /= 1024.0
+    return "%.1f%s%s" % (num, 'Yi', suffix)
 
 def main(event, context):
-    print objs
     try:
         for obj in objs:
-            print obj
-            lastobjectdate = (obj.last_modified).date()
-            print lastobjectdate
-            lastobjectstr = str(lastobjectdate)
+            print (obj.last_modified.date(), obj.key, sizeof_fmt(obj.size))
+            file_date = obj.last_modified.date()
+            file_name = obj.key
+            file_size = sizeof_fmt(obj.size)
+            if file_date == today:
+                backup_status = 1
+                print("Backup OK, All Good")
+                print ("--> "+ str(file_date), file_name, file_size)
+                break
+            else:
+                print("Not a backup from Today")
+                backup_status = 0
+        if backup_status == 0:
+            notification(file_date=file_date, file_name=file_name, file_size=file_size)
+        return file_date, file_name, file_size
     except botocore.exceptions.ClientError as e:
         error_code = e.response['Error']['Code']
         if error_code == '404':
             print("There is no file in this bucket")
         else:
-            print e
+            print (e)
 
-    # Compare with defined date
-    if today == lastobjectdate:
-        print("OK, latest file comes from " + lastobjectstr + ". We are: " + todaystr)
-    else:
-        # SES Notification
-        # Try to send the email.
+def notification(file_date, file_name, file_size):
         try:
-            # Email Setting (SES)
-            # Replace sender@example.com with your "From" address.
-            # This address must be verified with Amazon SES.
-            SENDER = "Alfred Backup <victor.grenu@gmail.com>"
-
-            # Replace recipient@example.com with a "To" address. If your account
-            # is still in the sandbox, this address must be verified.
+            SENDER = "Alfred Backup Notifier <victor.grenu@gmail.com>"
             RECIPIENT = "victor.grenu@gmail.com"
-
-            # Specify a configuration set. If you do not want to use a configuration
-            # set, comment the following variable, and the
-            # ConfigurationSetName=CONFIGURATION_SET argument below.
-            #CONFIGURATION_SET = "ConfigSet"
-
-            # Subject line for the email.
-            SUBJECT = "Alfred Backup Failed"
-
+            SUBJECT = "Alfred Backup Notifier - Backup Failed ❌"
+            CHARSET = "UTF-8"
             # Email body for recipients with non-HTML email clients.
-            BODY_TEXT = ("Alert - Warning\r\n"
-                        "Jeedom Backup Failed"
+            BODY_TEXT = ("Alfred Backup Notifier\r\n"
+                        "Last backup comes from:\r\n"
+                        """str(file_date), file_name, file_size""""\r\n"
                         "Alfred"
                         )
-                        
             # HTML body of the email.
             BODY_HTML = """<html>
-            <head></head>
             <body>
-            <h1>Alfred Jeedom Automated Backup</h1>
-            <p>Jeedom backup failed on """ + todaystr + """</p>
-            <p>The latest key in S3 comes from """ + lastobjectstr + """</p>
-            <p>Alfred</p>
+            <h1>Alfred Backup Notifier 👨‍🚒</h1>
+            <h3>Last backup comes from:</h3>
+            <table cellpadding="4" cellspacing="4" border="1">
+            <tr><td>Date</td><td>Name</td><td>Size</td></tr>
+            <tr><td>""" + str(file_date) + """</td><td>""" + file_name + """</td><td>""" + file_size + """</td></tr>
+            </table>
+            <p><a href="https://github.com/z0ph/s3-monitor">Alfred Backup Notifier</a></p>
             </body>
             </html>
                         """
 
-            # Character encoding for the email.
-            CHARSET = "UTF-8"
             # Provide the contents of the email.
-            response = client.send_email(
+            response = ses.send_email(
                 Destination={
                     'ToAddresses': [
                         RECIPIENT,
@@ -109,9 +108,8 @@ def main(event, context):
         except ClientError as e:
             print(e.response['Error']['Message'])
         else:
-            print("We are: " + todaystr + ". file is old: " + lastobjectstr)
             print("Email sent! Message ID:"),
             print(response['MessageId'])
 
 # Run locally for testing purpose
-# main()
+main(0,0)

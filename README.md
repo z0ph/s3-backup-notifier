@@ -6,7 +6,7 @@ I'm using this to monitor my effective backup of my home automation system and b
 
 ## Technical details
 
-* Uses AWS Lambda function (Python 2.7)
+* Uses AWS Lambda function (Python)
 * Rely on AWS Lambda layer for boto3 and botocore
 * Scheduled Lambda (daily) with CloudWatch Events
 * Uses AWS Simple Email Service (SES) for Emails Notifications
