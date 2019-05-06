@@ -112,4 +112,5 @@ def notification(file_date, file_name, file_size):
             print(response['MessageId'])
 
 # Run locally for testing purpose
-main(0,0)
+if __name__ == '__main__':
+    main(0,0)

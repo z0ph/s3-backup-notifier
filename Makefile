@@ -3,7 +3,6 @@ help:
 	@echo "layer - prepare the layer"
 	@echo "package - prepare the package"
 	@echo "deploy - deploy the lambda function"
-	@echo "packloy - package and deploy"
 	@echo "clean - clean the build folder"
 	@echo "clean-layer - clean the layer folder"
 	@echo "cleaning - clean build and layer folders"
@@ -74,9 +73,6 @@ deploy:
 			--parameter-overrides env=${env} \
 			--capabilities CAPABILITY_IAM \
 			--no-fail-on-empty-changeset
-
-packloy:
-	aws-vault exec admin -- make package env=${env} && aws-vault exec admin -- make deploy env=${env}
 
 tear-down:
 	@read -p "Are you sure that you want to destroy stack '${project}-${env}'? [y/N]: " sure && [ $${sure:-N} = 'y' ]
