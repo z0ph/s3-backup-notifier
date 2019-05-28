@@ -1,4 +1,4 @@
-# Alfred Backup Notifier
+# s3-nobackup-notifier
 
 Alfred Backup Notifier intends to check the last object date in AWS S3 bucket, and if it's older than today, send alerting email via AWS Simple Email Service (SES).
 
