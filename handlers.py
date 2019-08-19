@@ -20,8 +20,6 @@ bucket = s3.Bucket(bucker_name)
 objs = bucket.objects.filter(Prefix=s3_prefix).all()
 
 # Convert to Human Readable
-
-
 def sizeof_fmt(num, suffix='B'):
     for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
         if abs(num) < 1024.0:
@@ -48,7 +46,7 @@ def main(event, context):
                 backup_status = 0
         if backup_status == 0:
             notification(file_date=file_date, file_name=file_name, file_size=file_size)
-        return file_date, file_name, file_size
+        #return file_date, file_name, file_size
     except botocore.exceptions.ClientError as e:
         error_code = e.response['Error']['Code']
         if error_code == '404':
@@ -116,7 +114,5 @@ def notification(file_date, file_name, file_size):
         print(response['MessageId'])
 
 # Run locally for testing purpose
-
-
 if __name__ == '__main__':
     main(0, 0)
