@@ -16,6 +16,10 @@ I'm using this to monitor the effective backup of my home automation system and 
 * Configure AWS Credentials (prefer [aws-vault](https://github.com/99designs/aws-vault))
 * Using [AWS Serverless Application Model (SAM)](https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md)
 
+### Requirements
+
+- Change permissions in `sam.yml` for your own bucket.
+
 ### Build
 
 Build layer, and Lambda function package.

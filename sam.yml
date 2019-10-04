@@ -38,7 +38,8 @@ Resources:
         Timer:
           Type: Schedule
           Properties:
-            Schedule: rate(1 day)
+            Name: s3-monitor-schedule
+            Schedule: cron(0 4 * * ? *)
       Tags:
         Project: s3-monitor
 
