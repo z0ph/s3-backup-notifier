@@ -1,20 +1,33 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
 Description: Provision the AWS Lambda function of s3-monitor
-
+###########################################################
 Parameters:
-
-  env:
+###########################################################
+  ENV:
     Type: String
     Default: dev
     Description: Environment Name
-
+  PROJECT:
+    Type: String
+    Default: noname_project
+    Description: Project Name
+  MONITORINGBUCKET:
+    Type: String
+    Default: no_bucket_vars_definied
+    Description: Monitored Bucket Name
+  S3PREFIX:
+    Type: String
+    Default: no_prefix_defined
+    Description: S3 Prefix to monitor
+###########################################################
 Resources:
+###########################################################
   s3monitor:
     Type: 'AWS::Serverless::Function'
     Properties:
-      FunctionName: !Sub s3-monitor-${env}
-      Description: Monitoring for S3 (Backups Jeedom)
+      FunctionName: !Sub s3-monitor-${ENV}
+      Description: !Sub File monitoring for S3 (${PROJECT})
       Handler: handlers.main
       Runtime: python3.7
       CodeUri: ./build
@@ -22,6 +35,10 @@ Resources:
       Timeout: 30
       Layers:
         - !Ref boto3layer
+      Environment:
+        Variables:
+          MONITORINGBUCKET: !Ref MONITORINGBUCKET
+          S3PREFIX: !Ref S3PREFIX
       Policies:
         - AWSLambdaExecute # Managed Policy
         - Version: '2012-10-17' # Policy Document
@@ -29,7 +46,7 @@ Resources:
             - Effect: Allow
               Action:
               - s3:List*
-              Resource: 'arn:aws:s3:::zoph.backup'
+              Resource: !Sub 'arn:aws:s3:::${MONITORINGBUCKET}'
             - Effect: Allow
               Action:
                 - ses:SendEmail
@@ -41,7 +58,7 @@ Resources:
             Name: s3-monitor-schedule
             Schedule: cron(0 4 * * ? *)
       Tags:
-        Project: s3-monitor
+        Project: !Ref PROJECT
 
   boto3layer:
     Type: 'AWS::Serverless::LayerVersion'

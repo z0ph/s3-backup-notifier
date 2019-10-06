@@ -1,11 +1,12 @@
 import datetime
 import boto3
 import botocore
+import os
 from botocore.exceptions import ClientError
 
 # Config
-bucker_name = "zoph.backup"
-s3_prefix = "Jeedom"
+bucker_name = os.environ['MONITORINGBUCKET']
+s3_prefix = os.environ['S3PREFIX']
 
 # Get Today's date
 today = datetime.date.today()
@@ -20,6 +21,8 @@ bucket = s3.Bucket(bucker_name)
 objs = bucket.objects.filter(Prefix=s3_prefix).all()
 
 # Convert to Human Readable
+
+
 def sizeof_fmt(num, suffix='B'):
     for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
         if abs(num) < 1024.0:
@@ -30,29 +33,27 @@ def sizeof_fmt(num, suffix='B'):
 
 def main(event, context):
     try:
-        backup_status = 0
+        backup_success = 0
         for obj in objs:
-            print (obj.last_modified.date(), obj.key, sizeof_fmt(obj.size))
+            print(obj.last_modified.date(), obj.key, sizeof_fmt(obj.size))
             file_date = obj.last_modified.date()
             file_name = obj.key
             file_size = sizeof_fmt(obj.size)
             if file_date == today:
-                backup_status = 1
                 print("Backup OK, All Good")
-                print ("--> " + str(file_date), file_name, file_size)
-                break
-            else:
-                print("Not a backup from Today")
-                backup_status = 0
-        if backup_status == 0:
+                print("--> " + str(file_date), file_name, file_size)
+                backup_success = 1
+        if backup_success == 0:
             notification(file_date=file_date, file_name=file_name, file_size=file_size)
-        #return file_date, file_name, file_size
+            print("No backup detected from today: " + str(today))
+            print("--> Last backup file: " + str(file_date), file_name, file_size)
     except botocore.exceptions.ClientError as e:
         error_code = e.response['Error']['Code']
+        print(e.response['Error']['Message'])
         if error_code == '404':
             print("There is no file in this bucket")
         else:
-            print (e)
+            print(e)
 
 
 def notification(file_date, file_name, file_size):
@@ -114,5 +115,7 @@ def notification(file_date, file_name, file_size):
         print(response['MessageId'])
 
 # Run locally for testing purpose
+
+
 if __name__ == '__main__':
     main(0, 0)

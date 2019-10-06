@@ -11,14 +11,15 @@ help:
 	@echo "	clean-layer - clean the layer folder"
 	@echo "	cleaning - clean build and layer folders"
 
-###############################################
-PROJECT ?= s3-monitor
+################## Project ####################
+PROJECT ?= zoph-s3monitor
 DESCRIPTION := S3 File Monitor
 ###############################################
 
-###############################################
-S3_BUCKET ?= zoph-s3monitor-artifacts
-MONITOR_BUCKET := this_one
+################## Variables ##################
+S3_BUCKET ?= ${PROJECT}-artifacts
+MONITORING_BUCKET := zoph.backup
+S3_PREFIX := Jeedom
 AWS_REGION ?= eu-west-1
 ENV ?= dev
 ###############################################
@@ -43,8 +44,12 @@ deploy:
 			--template-file build/template-lambda.yml \
 			--region ${AWS_REGION} \
 			--stack-name "${PROJECT}-${ENV}" \
-			--parameter-overrides ENV=${ENV} \
 			--capabilities CAPABILITY_IAM \
+			--parameter-overrides \
+				ENV=${ENV} \
+				MONITORINGBUCKET=${MONITORING_BUCKET} \
+				S3PREFIX=${S3_PREFIX} \
+				PROJECT=${PROJECT} \
 			--no-fail-on-empty-changeset
 
 layer: clean-layer
