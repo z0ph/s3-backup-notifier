@@ -13,7 +13,7 @@ help:
 
 ################## Project ####################
 PROJECT ?= zoph-s3monitor
-DESCRIPTION := S3 File Monitor
+DESCRIPTION := S3 Backup Notifier
 ###############################################
 
 ################## Variables ##################

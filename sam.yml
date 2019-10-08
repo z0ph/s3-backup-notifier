@@ -10,7 +10,7 @@ Parameters:
     Description: Environment Name
   PROJECT:
     Type: String
-    Default: noname_project
+    Default: no_name_project
     Description: Project Name
   MONITORINGBUCKET:
     Type: String

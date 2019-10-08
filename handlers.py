@@ -58,26 +58,26 @@ def main(event, context):
 
 def notification(file_date, file_name, file_size):
     try:
-        SENDER = "Alfred Backup Notifier <victor.grenu@gmail.com>"
+        SENDER = "S3 Backup Notifier <victor.grenu@gmail.com>"
         RECIPIENT = "victor.grenu@gmail.com"
-        SUBJECT = "Alfred Backup Notifier - Backup Failed ❌"
+        SUBJECT = "S3 Backup Notifier - Backup Failed ❌"
         CHARSET = "UTF-8"
         # Email body for recipients with non-HTML email clients.
-        BODY_TEXT = ("Alfred Backup Notifier\r\n"
+        BODY_TEXT = ("S3 Backup Notifier\r\n"
                     "Last backup comes from:\r\n"
                     """str(file_date), file_name, file_size""""\r\n"
-                    "Alfred"
+                    "S3 Backup Notifier"
                     )
         # HTML body of the email.
         BODY_HTML = """<html>
         <body>
-        <h1>Alfred Backup Notifier 👨‍🚒</h1>
+        <h1>S3 Backup Notifier 👨‍🚒</h1>
         <h3>Last backup comes from:</h3>
         <table cellpadding="4" cellspacing="4" border="1">
         <tr><td>Date</td><td>Name</td><td>Size</td></tr>
         <tr><td>""" + str(file_date) + """</td><td>""" + file_name + """</td><td>""" + file_size + """</td></tr>
         </table>
-        <p><a href="https://github.com/z0ph/s3-monitor">Alfred Backup Notifier</a></p>
+        <p><a href="https://github.com/z0ph/s3-backup-notifier">S3 Backup Notifier</a></p>
         </body>
         </html>
                     """
