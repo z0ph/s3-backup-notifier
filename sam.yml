@@ -7,19 +7,31 @@ Parameters:
   ENV:
     Type: String
     Default: dev
-    Description: Environment Name
+    Description: Environment name
   PROJECT:
     Type: String
     Default: no_name_project
-    Description: Project Name
+    Description: Project name
+  AWSREGION:
+    Type: String
+    Default: eu-west-1
+    Description: AWS Region
   MONITORINGBUCKET:
     Type: String
     Default: no_bucket_vars_definied
-    Description: Monitored Bucket Name
+    Description: Monitored bucket name
   S3PREFIX:
     Type: String
     Default: no_prefix_defined
-    Description: S3 Prefix to monitor
+    Description: S3 prefix to monitor
+  RECIPIENTS:
+    Type: String
+    Default: no_recipients_defined@domain.com
+    Description: Recipients emails addresses
+  SENDER:
+    Type: String
+    Default: no_sender_defined@domain.com
+    Description: Sender email addresses
 ###########################################################
 Resources:
 ###########################################################
@@ -27,7 +39,7 @@ Resources:
     Type: 'AWS::Serverless::Function'
     Properties:
       FunctionName: !Sub s3-monitor-${ENV}
-      Description: !Sub File monitoring for S3 (${PROJECT})
+      Description: !Sub S3 Backup Monitor (${PROJECT})
       Handler: handlers.main
       Runtime: python3.7
       CodeUri: ./build
@@ -39,6 +51,9 @@ Resources:
         Variables:
           MONITORINGBUCKET: !Ref MONITORINGBUCKET
           S3PREFIX: !Ref S3PREFIX
+          RECIPIENTS: !Ref RECIPIENTS
+          SENDER: !Ref SENDER
+          AWSREGION: !Ref AWSREGION
       Policies:
         - AWSLambdaExecute # Managed Policy
         - Version: '2012-10-17' # Policy Document
@@ -59,6 +74,9 @@ Resources:
             Schedule: cron(0 4 * * ? *)
       Tags:
         Project: !Ref PROJECT
+        Environment: !Ref ENV
+        Monitoring_Bucket_Name: !Ref MONITORINGBUCKET
+        Region: !Ref AWSREGION
 
   boto3layer:
     Type: 'AWS::Serverless::LayerVersion'

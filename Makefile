@@ -12,14 +12,16 @@ help:
 	@echo "	cleaning - clean build and layer folders"
 
 ################## Project ####################
-PROJECT ?= zoph-s3monitor
+PROJECT ?= my_project_name
 DESCRIPTION := S3 Backup Notifier
 ###############################################
 
 ################## Variables ##################
 S3_BUCKET ?= ${PROJECT}-artifacts
-MONITORING_BUCKET := zoph.backup
-S3_PREFIX := Jeedom
+MONITORING_BUCKET := backup.bucket
+RECIPIENTS := david@doe.com
+SENDER := john@doe.com
+S3_PREFIX := MyPrefix
 AWS_REGION ?= eu-west-1
 ENV ?= dev
 ###############################################
@@ -50,6 +52,9 @@ deploy:
 				MONITORINGBUCKET=${MONITORING_BUCKET} \
 				S3PREFIX=${S3_PREFIX} \
 				PROJECT=${PROJECT} \
+				RECIPIENTS=${RECIPIENTS} \
+				SENDER=${SENDER} \
+				AWSREGION=${AWS_REGION} \
 			--no-fail-on-empty-changeset
 
 layer: clean-layer

@@ -7,13 +7,16 @@ from botocore.exceptions import ClientError
 # Config
 bucker_name = os.environ['MONITORINGBUCKET']
 s3_prefix = os.environ['S3PREFIX']
+recipients = os.environ['RECIPIENTS'].split()
+subject = 'S3 Backup Notifier - Backup Failed ❌'
+sender = "S3 Backup Notifier <" + os.environ['SENDER'] + ">"
+aws_region = os.environ['AWSREGION']
 
 # Get Today's date
 today = datetime.date.today()
 
 # AWS Connection
-AWS_REGION = "eu-west-1"
-session = boto3.Session(region_name=AWS_REGION)
+session = boto3.Session(region_name=aws_region)
 s3 = session.resource('s3')
 ses = session.client('ses')
 
@@ -21,8 +24,6 @@ bucket = s3.Bucket(bucker_name)
 objs = bucket.objects.filter(Prefix=s3_prefix).all()
 
 # Convert to Human Readable
-
-
 def sizeof_fmt(num, suffix='B'):
     for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
         if abs(num) < 1024.0:
@@ -58,9 +59,6 @@ def main(event, context):
 
 def notification(file_date, file_name, file_size):
     try:
-        SENDER = "S3 Backup Notifier <victor.grenu@gmail.com>"
-        RECIPIENT = "victor.grenu@gmail.com"
-        SUBJECT = "S3 Backup Notifier - Backup Failed ❌"
         CHARSET = "UTF-8"
         # Email body for recipients with non-HTML email clients.
         BODY_TEXT = ("S3 Backup Notifier\r\n"
@@ -69,16 +67,17 @@ def notification(file_date, file_name, file_size):
                     "S3 Backup Notifier"
                     )
         # HTML body of the email.
-        BODY_HTML = """<html>
-        <body>
-        <h1>S3 Backup Notifier 👨‍🚒</h1>
-        <h3>Last backup comes from:</h3>
-        <table cellpadding="4" cellspacing="4" border="1">
-        <tr><td>Date</td><td>Name</td><td>Size</td></tr>
-        <tr><td>""" + str(file_date) + """</td><td>""" + file_name + """</td><td>""" + file_size + """</td></tr>
-        </table>
-        <p><a href="https://github.com/z0ph/s3-backup-notifier">S3 Backup Notifier</a></p>
-        </body>
+        BODY_HTML = """
+        <html>
+            <body>
+                <h1>S3 Backup Notifier 👨‍🚒</h1>
+                <h3>Last backup comes from:</h3>
+                <table cellpadding="4" cellspacing="4" border="1">
+                <tr><td>Date</td><td>Name</td><td>Size</td></tr>
+                <tr><td>""" + str(file_date) + """</td><td>""" + file_name + """</td><td>""" + file_size + """</td></tr>
+                </table>
+                <p><a href="https://github.com/z0ph/s3-backup-notifier">S3 Backup Notifier</a></p>
+            </body>
         </html>
                     """
 
@@ -86,7 +85,7 @@ def notification(file_date, file_name, file_size):
         response = ses.send_email(
             Destination={
                 'ToAddresses': [
-                    RECIPIENT,
+                    recipients,
                 ],
             },
             Message={
@@ -102,10 +101,10 @@ def notification(file_date, file_name, file_size):
                 },
                 'Subject': {
                     'Charset': CHARSET,
-                    'Data': SUBJECT,
+                    'Data': subject,
                 },
             },
-            Source=SENDER,
+            Source=sender,
         )
     # Display an error if something goes wrong.
     except ClientError as e:
@@ -115,7 +114,5 @@ def notification(file_date, file_name, file_size):
         print(response['MessageId'])
 
 # Run locally for testing purpose
-
-
 if __name__ == '__main__':
     main(0, 0)

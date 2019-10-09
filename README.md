@@ -18,13 +18,13 @@ I'm using this to monitor the effectiveness of backup of my home automation syst
 ### Requirements
 
 * Configure AWS Credentials (prefer [aws-vault](https://github.com/99designs/aws-vault))
-* Create a bucket called: `<project_name>-artifacts`
+* Create a bucket called: `<project_name>-artifacts` (Prefer versioned and encrypted)
 
 > Its using [AWS Serverless Application Model (SAM)](https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md)
 
 ### Build
 
-Build layer, and Lambda function package.
+Build layer, and AWS Lambda function package.
 
 ```bash
 $ make layer
@@ -35,8 +35,17 @@ $ make package
 
 Deploy CloudFormation stack.
 
+> RECIPIENTS var is space separated
+
 ```bash
-$ make deploy PROJECT=<project_name> ENV=<your_env> MONITORING_BUCKET=<bucket_to_monitor> S3_PREFIX=<s3_prefix>
+$ make deploy \
+    PROJECT=<your_project_name> \
+    ENV=<your_env> \
+    MONITORING_BUCKET=<bucket_to_monitor> \
+    S3_PREFIX=<s3_prefix> \
+    SENDER=<sender_email> \
+    RECIPIENTS='<recipient_email1> <recipient_email2>' \
+    AWS_REGION='<your_aws_region>'
 ```
 
 ### Cleaning
@@ -45,4 +54,10 @@ Remove unused folders and files after the deployment of your the stack.
 
 ```bash
 $ make cleaning
+```
+
+### Destroy
+
+```bash
+$ make tear-down
 ```
