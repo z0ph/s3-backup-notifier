@@ -12,7 +12,7 @@ help:
 	@echo "	cleaning - clean build and layer folders"
 
 ################## Project ####################
-PROJECT ?= my_project_name
+PROJECT ?= zoph-s3monitor
 DESCRIPTION := S3 Backup Notifier
 ###############################################
 
@@ -36,14 +36,14 @@ package: clean
 	aws cloudformation package \
 			--template-file sam.yml \
 			--s3-bucket ${S3_BUCKET} \
-			--output-template-file build/template-lambda.yml
+			--output-template-file template-lambda.yml
 
 	@echo "Copying updated cloud template to S3 bucket"
-	aws s3 cp build/template-lambda.yml 's3://${S3_BUCKET}/template-lambda.yml'
+	aws s3 cp template-lambda.yml 's3://${S3_BUCKET}/template-lambda.yml'
 
 deploy:
 	aws cloudformation deploy \
-			--template-file build/template-lambda.yml \
+			--template-file template-lambda.yml \
 			--region ${AWS_REGION} \
 			--stack-name "${PROJECT}-${ENV}" \
 			--capabilities CAPABILITY_IAM \
