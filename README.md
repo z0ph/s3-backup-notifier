@@ -1,5 +1,7 @@
 # S3 Backup Notifier :envelope:
 
+![Deploy s3-backup-notifier](https://github.com/z0ph/s3-backup-notifier/workflows/Deploy%20s3-backup-notifier/badge.svg?branch=master)
+
 s3 backup notifier intends to `daily` check the last object date in an AWS S3 bucket, and if it's older than today, send alerting email via AWS Simple Email Service (SES).
 
 I'm using this to monitor the effectiveness of backup of my home automation systems and be alerted on any backup related issue.
