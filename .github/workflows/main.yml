@@ -10,18 +10,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Assume Role
-        uses: youyo/awscredswrap@master
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          role_arn: ${{ secrets.ROLE_ARN }}
-          duration_seconds: 3600
-          role_session_name: 'awscredswrap@GitHubActions'
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'eu-west-1'
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+          role-to-assume: zoph-admin
+          role-duration-seconds: 1200
+          role-session-name: GH-Actions
 
       - name: Checkout
         uses: actions/checkout@master
+
+      - name: Test credentials
+        run: |
+          aws s3 ls
 
       # - name: sam build
       #   uses: youyo/aws-sam-action/python3.7@master
