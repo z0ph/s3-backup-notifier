@@ -1,19 +1,49 @@
-name: "Deploy s3-backup-notifier"
+name: "build and deploy s3-backup-notifier"
 on: 
   push:
     branches:
     - master
 
 jobs:
-  deploy:
+  aws_sam:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - uses: mgenteluci/cloudformation-deploy-action@v1.3.0
-      env:
-        TEMPLATE: 'template-lambda.yml'
-        AWS_STACK_NAME: 'zoph-s3monitor-dev'
-        AWS_REGION: 'eu-west-1'
-        AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
-        AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-        AWS_DEPLOY_BUCKET: ${{secrets.AWS_DEPLOY_BUCKET}}
+      - name: Assume Role
+        uses: youyo/awscredswrap@master
+        with:
+          role_arn: ${{ secrets.ROLE_ARN }}
+          duration_seconds: 3600
+          role_session_name: 'awscredswrap@GitHubActions'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: 'eu-west-1'
+
+      - name: Identity Check
+        uses: actions/aws/cli@master
+        with:
+          args: sts get-caller-identity
+
+      - name: Checkout
+        uses: actions/checkout@master
+
+      # - name: sam build
+      #   uses: youyo/aws-sam-action/python3.7@master
+      #   with:
+      #     sam_command: build
+
+      # - name: sam deploy
+      #   uses: youyo/aws-sam-action/python3.7@master
+      #   with:
+      #     sam_command: 'deploy --no-fail-on-empty-changeset'
+
+
+    # - uses: actions/checkout@v1
+    # - uses: mgenteluci/cloudformation-deploy-action@v1.3.0
+    #   env:
+    #     TEMPLATE: 'template-lambda.yml'
+    #     AWS_STACK_NAME: 'zoph-s3monitor-dev'
+    #     AWS_REGION: 'eu-west-1'
+    #     AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+    #     AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+    #     AWS_DEPLOY_BUCKET: ${{secrets.AWS_DEPLOY_BUCKET}}
