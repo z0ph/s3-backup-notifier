@@ -1,0 +1,19 @@
+name: "Deploy s3-backup-notifier"
+on: 
+  push:
+    branches:
+    - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: mgenteluci/cloudformation-deploy-action@v1.3.0
+      env:
+        TEMPLATE: 'build/template-lambda.yml'
+        AWS_STACK_NAME: 'zoph-s3monitor-dev'
+        AWS_REGION: 'eu-west-1'
+        AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+        AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+        AWS_DEPLOY_BUCKET: ${{secrets.AWS_DEPLOY_BUCKET}}
