@@ -20,11 +20,6 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: 'eu-west-1'
 
-      - name: Identity Check
-        uses: actions/aws/cli@master
-        with:
-          args: sts get-caller-identity
-
       - name: Checkout
         uses: actions/checkout@master
 
