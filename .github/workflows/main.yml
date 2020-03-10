@@ -26,10 +26,15 @@ jobs:
         run: |
           aws sts get-caller-identity
 
-      # - name: sam build
-      #   uses: youyo/aws-sam-action/python3.7@master
-      #   with:
-      #     sam_command: build
+      - name: sam build
+        # sam deploy now implicitly performs the functionality of sam package. You can use the sam deploy command directly to package and deploy your application.
+        uses: youyo/aws-sam-action/python3.7@master
+        with:
+          sam_command: |
+            build \
+            -b ./build \
+            -s . \
+            -t ./sam.yml
 
       # - name: sam deploy
       #   uses: youyo/aws-sam-action/python3.7@master
