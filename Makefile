@@ -34,7 +34,7 @@ package: clean
 
 	@echo "zipping python code, uploading to S3 bucket, and transforming template"
 	aws cloudformation package \
-			--template-file sam.yml \
+			--template-file template.yml \
 			--s3-bucket ${S3_BUCKET} \
 			--output-template-file template-lambda.yml
 
