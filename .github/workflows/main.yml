@@ -29,7 +29,7 @@ jobs:
       - name: sam build
         uses: TractorZoom/sam-cli-action@master
         with:
-          sam_command: "build"
+          sam_command: "build --debug"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
