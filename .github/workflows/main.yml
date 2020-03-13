@@ -38,9 +38,16 @@ jobs:
             deploy \
               --template-file build/template.yaml \
               --region ${{ secrets.REGION }} \
-              --capabilities CAPABILITY_IAM" \
-              --parameter-overrides ENV=$ENV MONITORINGBUCKET=$MONITORING_BUCKET S3PREFIX=$S3_PREFIX PROJECT=$PROJECT RECIPIENTS=$RECIPIENTS SENDER=$SENDER AWSREGION=${{ secrets.REGION }} \
-              --no-fail-on-empty-changeset
+              --capabilities CAPABILITY_IAM \
+              --no-fail-on-empty-changeset \
+              --parameter-overrides \
+                  ENV=$ENV \
+                  MONITORINGBUCKET=$MONITORING_BUCKET \
+                  S3PREFIX=$S3_PREFIX \
+                  PROJECT=$PROJECT \
+                  RECIPIENTS=$RECIPIENTS \
+                  SENDER=$SENDER \
+                  AWSREGION=${{ secrets.REGION }}
         env:
           ENV: dev
           MONITORINGBUCKET: ${{ secrets.MONITORINGBUCKET }}
