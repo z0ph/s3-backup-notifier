@@ -37,6 +37,10 @@ jobs:
           sam_command: |
             deploy \
               --template-file build/template.yaml \
+              --stack-name $PROJECT-$ENV \
+              --region ${{ secrets.REGION }} \
+              --capabilities CAPABILITY_IAM \
+              --no-fail-on-empty-changeset \
               --parameter-overrides ENV=$ENV MONITORINGBUCKET=$MONITORING_BUCKET S3PREFIX=$S3_PREFIX PROJECT=$PROJECT RECIPIENTS=$RECIPIENTS SENDER=$SENDER AWSREGION=${{ secrets.REGION }}
         env:
           ENV: dev
@@ -47,8 +51,4 @@ jobs:
           SENDER: ${{ secrets.SENDER }}
 
 
-
-              # --region ${{ secrets.REGION }} \
-              # --capabilities CAPABILITY_IAM \
-              # --no-fail-on-empty-changeset \
 
