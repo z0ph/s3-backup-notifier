@@ -36,14 +36,14 @@ package: clean
 	aws cloudformation package \
 			--template-file template.yml \
 			--s3-bucket ${S3_BUCKET} \
-			--output-template-file template-lambda.yml
+			--output-template-file ./sam-template/sam.yml
 
 	@echo "Copying updated cloud template to S3 bucket"
-	aws s3 cp template-lambda.yml 's3://${S3_BUCKET}/template-lambda.yml'
+	aws s3 cp ./sam-template/sam.yml 's3://${S3_BUCKET}/'
 
 deploy:
 	aws cloudformation deploy \
-			--template-file template-lambda.yml \
+			--template-file ./sam-template/sam.yml \
 			--region ${AWS_REGION} \
 			--stack-name "${PROJECT}-${ENV}" \
 			--capabilities CAPABILITY_IAM \
@@ -61,7 +61,7 @@ layer: clean-layer
 	pip3 install \
 			--isolated \
 			--disable-pip-version-check \
-			-Ur requirements.txt -t ./layer/
+			-Ur ./python/requirements.txt -t ./layer/
 
 clean-layer:
 	@rm -fr layer/

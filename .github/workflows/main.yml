@@ -9,30 +9,33 @@ jobs:
   aws_sam:
     runs-on: ubuntu-latest
     steps:
-      # - name: Assume Role
-      #   uses: aws-actions/configure-aws-credentials@v1
-      #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     aws-region: eu-west-1
-      #     role-to-assume: zoph-admin
-      #     role-duration-seconds: 1200
-      #     role-session-name: GH-Actions
+      - name: Assume Role
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+          role-to-assume: zoph-admin
+          role-duration-seconds: 1200
+          role-session-name: GH-Actions
 
       - name: Checkout
         uses: actions/checkout@master
 
-      # - name: Test credentials - whoami
-      #   run: |
-      #     aws sts get-caller-identity
+      - name: Test credentials - whoami
+        run: |
+          aws sts get-caller-identity
 
       - name: sam build
         uses: TractorZoom/sam-cli-action@master
         with:
-          sam_command: "build --debug"
+          sam_command: |
+            build \
+            -b ./build \
+            -s ./python \
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.REGION }}
 
 
@@ -40,21 +43,3 @@ jobs:
       #   uses: TractorZoom/sam-cli-action@master
       #   with:
       #     sam_command: "deploy"
-
-
-      # - name: sam build
-        # sam deploy now implicitly performs the functionality of sam package. You can use the sam deploy command directly to package and deploy your application.
-        # uses: youyo/aws-sam-action/python3.7@master
-        # with:
-        #   sam_command: build
-          # sam_command: |
-          #   build \
-          #   -b ./build \
-          #   -s . \
-          #   -t ./sam.yml
-
-      # - name: sam deploy
-      #   uses: youyo/aws-sam-action/python3.7@master
-      #   with:
-      #     sam_command: 'deploy --no-fail-on-empty-changeset'
-

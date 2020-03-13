@@ -39,7 +39,7 @@ Resources:
       Description:
         Fn::Sub: S3 Backup Monitor (${PROJECT})
       Handler: handlers.main
-      Runtime: python3.7
+      Runtime: python3.8
       CodeUri: s3://zoph-s3monitor-artifacts/e67112ef025d467e1fc91735f3108cd2
       MemorySize: 128
       Timeout: 30
@@ -95,5 +95,6 @@ Resources:
       - python2.7
       - python3.6
       - python3.7
+      - python3.8
       LicenseInfo: Available under the MIT-0 license.
       RetentionPolicy: Retain
