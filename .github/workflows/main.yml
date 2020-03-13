@@ -37,9 +37,6 @@ jobs:
           sam_command: |
             deploy \
               --template-file build/template.yaml \
-              --region ${{ secrets.REGION }} \
-              --capabilities CAPABILITY_IAM \
-              --no-fail-on-empty-changeset \
               --parameter-overrides \
                   ENV=$ENV \
                   MONITORINGBUCKET=$MONITORING_BUCKET \
@@ -55,4 +52,10 @@ jobs:
           PROJECT: ${{ secrets.PROJECT }}
           RECIPIENTS: ${{ secrets.RECIPIENTS }}
           SENDER: ${{ secrets.SENDER }}
+
+
+
+              # --region ${{ secrets.REGION }} \
+              # --capabilities CAPABILITY_IAM \
+              # --no-fail-on-empty-changeset \
 
