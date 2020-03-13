@@ -35,19 +35,19 @@ jobs:
         uses: TractorZoom/sam-cli-action@master
         with:
           sam_command: |
-            deploy \
+            "deploy \
               --template-file build/template.yaml \
               --region ${{ secrets.REGION }} \
               --capabilities CAPABILITY_IAM" \
               --parameter-overrides \
-                ENV=${ENV} \
-                MONITORINGBUCKET=$MONITORING_BUCKET \
-                S3PREFIX=$S3_PREFIX \
-                PROJECT=$PROJECT \
-                RECIPIENTS=$RECIPIENTS \
-                SENDER=$SENDER \
+                ENV=${ENV}, \
+                MONITORINGBUCKET=$MONITORING_BUCKET, \
+                S3PREFIX=$S3_PREFIX, \
+                PROJECT=$PROJECT, \
+                RECIPIENTS=$RECIPIENTS, \
+                SENDER=$SENDER, \
                 AWSREGION=${{ secrets.REGION }} \
-              --no-fail-on-empty-changeset
+              --no-fail-on-empty-changeset"
         env:
           ENV: dev
           MONITORINGBUCKET: ${{ secrets.MONITORINGBUCKET }}
