@@ -42,7 +42,7 @@ Resources:
       Description: !Sub S3 Backup Monitor (${PROJECT})
       Handler: handlers.main
       Runtime: python3.8
-      CodeUri: ./build
+      CodeUri: ./python
       MemorySize: 128
       Timeout: 30
       Layers:
