@@ -38,6 +38,7 @@ jobs:
             deploy \
               --template-file build/template.yaml \
               --stack-name $PROJECT-$ENV \
+              --s3-bucket $PROJECT-artifacts \
               --region ${{ secrets.REGION }} \
               --capabilities CAPABILITY_IAM \
               --no-fail-on-empty-changeset \
