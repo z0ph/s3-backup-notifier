@@ -15,7 +15,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.REGION }}
-          role-to-assume: zoph-admin
+          role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
           role-duration-seconds: 1200
           role-session-name: GH-Actions
 
@@ -37,19 +37,9 @@ jobs:
           sam_command: |
             deploy \
               --template-file build/template.yaml \
-              --stack-name "$PROJECT-$ENV" \
-              --s3-bucket "$PROJECT-artifacts" \
+              --stack-name ${{ secrets.PROJECT }}-${{ secrets.ENV }} \
+              --s3-bucket ${{ secrets.PROJECT }}-artifacts \
               --region ${{ secrets.REGION }} \
-              --capabilities "CAPABILITY_IAM" \
+              --capabilities CAPABILITY_IAM \
               --no-fail-on-empty-changeset \
-              --parameter-overrides ENV=$ENV MONITORINGBUCKET=$MONITORING_BUCKET S3PREFIX=$S3_PREFIX PROJECT=$PROJECT RECIPIENTS=$RECIPIENTS SENDER=$SENDER AWSREGION=${{ secrets.REGION }}
-        env:
-          ENV: dev
-          MONITORINGBUCKET: ${{ secrets.MONITORINGBUCKET }}
-          S3PREFIX: ${{ secrets.S3PREFIX }}
-          PROJECT: ${{ secrets.PROJECT }}
-          RECIPIENTS: ${{ secrets.RECIPIENTS }}
-          SENDER: ${{ secrets.SENDER }}
-
-
-
+              --parameter-overrides ENV=${{ secrets.ENV }} MONITORINGBUCKET=${{ secrets.MONITORINGBUCKET }} S3PREFIX=${{ secrets.S3PREFIX }} PROJECT=${{ secrets.PROJECT }} RECIPIENTS=${{ secrets.RECIPIENTS }} SENDER=${{ secrets.SENDER }} AWSREGION=${{ secrets.REGION }}
