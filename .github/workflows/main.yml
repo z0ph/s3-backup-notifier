@@ -40,6 +40,5 @@ jobs:
               --stack-name ${{ secrets.PROJECT }}-${{ secrets.ENV }} \
               --s3-bucket ${{ secrets.PROJECT }}-artifacts \
               --region ${{ secrets.REGION }} \
-              --capabilities "CAPABILITY_IAM" \
               --no-fail-on-empty-changeset \
-              --parameter-overrides ENV=${{ secrets.ENV }} MONITORINGBUCKET=${{ secrets.MONITORINGBUCKET }} S3PREFIX=${{ secrets.S3PREFIX }} PROJECT=${{ secrets.PROJECT }} RECIPIENTS=${{ secrets.RECIPIENTS }} SENDER=${{ secrets.SENDER }} AWSREGION=${{ secrets.REGION }}
+              --parameter-overrides ENV=${{ secrets.ENV }} MONITORINGBUCKET=${{ secrets.MONITORINGBUCKET }} S3PREFIX=${{ secrets.S3PREFIX }} PROJECT=${{ secrets.PROJECT }} RECIPIENTS=${{ secrets.RECIPIENTS }} SENDER=${{ secrets.SENDER }} AWSREGION=${{ secrets.REGION }} --capabilities CAPABILITY_IAM
