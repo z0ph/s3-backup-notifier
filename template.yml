@@ -46,7 +46,7 @@ Resources:
       MemorySize: 128
       Timeout: 30
       Layers:
-        - !Ref arn:aws:lambda:{AWS::Region}:{AWS::AccountId}:layer:boto3-layer:15
+        - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:boto3-layer:15'
       Environment:
         Variables:
           MONITORINGBUCKET: !Ref MONITORINGBUCKET
