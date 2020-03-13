@@ -29,6 +29,7 @@ ENV ?= dev
 package: clean
 	@echo "Consolidating python code in ./build"
 	mkdir -p build
+	mkdir -p sam-template
 
 	cp -R *.py ./build/
 
@@ -58,6 +59,7 @@ deploy:
 			--no-fail-on-empty-changeset
 
 layer: clean-layer
+	mkdir -p layer
 	pip3 install \
 			--isolated \
 			--disable-pip-version-check \

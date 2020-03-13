@@ -37,7 +37,7 @@ $ make package
 
 Deploy CloudFormation stack.
 
-> RECIPIENTS var is space separated
+> RECIPIENTS var is space-separated
 
 ```bash
 $ make deploy \
@@ -52,7 +52,7 @@ $ make deploy \
 
 ### Cleaning
 
-Remove unused folders and files after the deployment of your the stack.
+Remove unused folders and files after the deployment of your stack.
 
 ```bash
 $ make cleaning
