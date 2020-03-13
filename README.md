@@ -15,6 +15,8 @@ I'm using this to monitor the effectiveness of backup of my home automation syst
 * Scheduled Lambda (`daily`) using CloudWatch Events
 * Uses AWS Simple Email Service (SES) for Emails Notifications
 
+Nb: deployment for my own usage is done using Github Actions, you can check the associated [workflow](.github/workflows/main.yml).
+
 ## Installation
 
 ### Requirements
