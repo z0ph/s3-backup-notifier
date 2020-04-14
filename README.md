@@ -49,7 +49,8 @@ $ make deploy \
     S3_PREFIX=<s3_prefix> \
     SENDER=<sender_email> \
     RECIPIENTS='<recipient_email1> <recipient_email2>' \
-    AWS_REGION='<your_aws_region>'
+    AWS_REGION='<your_aws_region>' \
+    AWS_SES_REGION='<your_aws_ses_region>'
 ```
 
 ### Cleaning

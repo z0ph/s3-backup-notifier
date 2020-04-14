@@ -11,14 +11,18 @@ recipients = os.environ['RECIPIENTS'].split()
 subject = 'S3 Backup Notifier - Backup Failed ❌'
 sender = "S3 Backup Notifier <" + os.environ['SENDER'] + ">"
 aws_region = os.environ['AWSREGION']
-
+if 'AWSSESREGION' in os.environ:
+    aws_ses_region = os.environ['AWSSESREGION']
+else:
+    aws_ses_region = os.environ['AWSREGION']
+    
 # Get Today's date
 today = datetime.date.today()
 
 # AWS Connection
 session = boto3.Session(region_name=aws_region)
 s3 = session.resource('s3')
-ses = session.client('ses')
+ses = session.client('ses', region_name=aws_ses_region)
 
 bucket = s3.Bucket(bucker_name)
 objs = bucket.objects.filter(Prefix=s3_prefix).all()
