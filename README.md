@@ -28,10 +28,15 @@ Nb: deployment for my own usage is done using Github Actions, you can check the 
 
 ### Build
 
-Build layer, and AWS Lambda function package.
+Build layer and note the ARN for the deploy step.
 
 ```bash
 $ make layer
+```
+
+And AWS Lambda function package.
+
+```bash
 $ make package
 ```
 
@@ -49,7 +54,8 @@ $ make deploy \
     S3_PREFIX=<s3_prefix> \
     SENDER=<sender_email> \
     RECIPIENTS='<recipient_email1> <recipient_email2>' \
-    AWS_REGION='<your_aws_region>'
+    AWS_REGION='<your_aws_region>' \
+    BOTOLOAYER='<your-arn-for-boto-layer>'
 ```
 
 ### Cleaning

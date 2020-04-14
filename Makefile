@@ -56,14 +56,17 @@ deploy:
 				RECIPIENTS=${RECIPIENTS} \
 				SENDER=${SENDER} \
 				AWSREGION=${AWS_REGION} \
+				BOTOLAYER=${BOTOLAYER}
 			--no-fail-on-empty-changeset
 
 layer: clean-layer
 	mkdir -p layer
 	pip3 install \
-			--isolated \
-			--disable-pip-version-check \
-			-Ur ./python/requirements.txt -t ./layer/
+		--isolated \
+		--disable-pip-version-check \
+		-Ur ./python/requirements.txt -t ./layer/
+	zip -r boto3-layer.zip layer
+	export BOTOLAYER=`aws lambda publish-layer-version --layer-name boto3 --zip-file fileb://boto3-layer.zip`
 
 clean-layer:
 	@rm -fr layer/

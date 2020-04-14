@@ -46,7 +46,7 @@ Resources:
       MemorySize: 128
       Timeout: 30
       Layers:
-        - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:boto3-layer:15'
+        - !Sub BOTOLAYER
       Environment:
         Variables:
           MONITORINGBUCKET: !Ref MONITORINGBUCKET
@@ -77,17 +77,3 @@ Resources:
         Environment: !Ref ENV
         Monitoring_Bucket_Name: !Ref MONITORINGBUCKET
         Region: !Ref AWSREGION
-
-  # boto3layer:
-  #   Type: 'AWS::Serverless::LayerVersion'
-  #   Properties:
-  #     LayerName: boto3-layer
-  #     Description: boto3 and botocore layer
-  #     ContentUri: ./layer
-  #     CompatibleRuntimes:
-  #       - python2.7
-  #       - python3.6
-  #       - python3.7
-  #       - python3.8
-  #     LicenseInfo: 'Available under the MIT-0 license.'
-  #     RetentionPolicy: Retain
