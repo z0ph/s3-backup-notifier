@@ -46,7 +46,7 @@ Resources:
       MemorySize: 128
       Timeout: 30
       Layers:
-        - !Sub BOTOLAYER
+        - !Sub ${BOTOLAYER}
       Environment:
         Variables:
           MONITORINGBUCKET: !Ref MONITORINGBUCKET
