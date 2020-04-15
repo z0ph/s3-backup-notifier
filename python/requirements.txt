@@ -1,2 +1,2 @@
 boto3
-botocore3
+botocore
