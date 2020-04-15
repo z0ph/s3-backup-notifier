@@ -66,7 +66,7 @@ layer: clean-layer
 		--disable-pip-version-check \
 		-Ur ./python/requirements.txt -t ./layer/
 	zip -r boto3-layer.zip layer
-	export BOTOLAYER=`aws lambda publish-layer-version --layer-name boto3 --zip-file fileb://boto3-layer.zip`
+	aws lambda publish-layer-version --layer-name boto3 --zip-file fileb://boto3-layer.zip
 
 clean-layer:
 	@rm -fr layer/
