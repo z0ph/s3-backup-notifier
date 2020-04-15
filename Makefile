@@ -31,7 +31,7 @@ package: clean
 	mkdir -p build
 	mkdir -p sam-template
 
-	cp -R *.py ./build/
+	cp -R ./python/*.py ./build/
 
 	@echo "zipping python code, uploading to S3 bucket, and transforming template"
 	aws cloudformation package \
