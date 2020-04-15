@@ -56,7 +56,8 @@ deploy:
 				RECIPIENTS=${RECIPIENTS} \
 				SENDER=${SENDER} \
 				AWSREGION=${AWS_REGION} \
-				BOTOLAYER=${BOTOLAYER}
+				BOTOLAYER=${BOTOLAYER} \
+				BOTOLAYERVERSION=${BOTOLAYERVERSION} \
 			--no-fail-on-empty-changeset
 
 layer: clean-layer
