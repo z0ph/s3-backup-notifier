@@ -68,7 +68,7 @@ Resources:
         Timer:
           Type: Schedule
           Properties:
-            Name: s3-monitor-schedule-${ENV}
+            Name: !Sub s3-monitor-schedule-${ENV}
             Schedule: cron(0 4 * * ? *)
       Tags:
         Project: !Ref PROJECT
