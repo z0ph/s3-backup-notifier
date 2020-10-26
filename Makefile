@@ -9,7 +9,7 @@ help:
 	@echo "	clean - clean the build folder"
 
 ################## Project ####################
-PROJECT ?= zoph-s3monitor
+PROJECT ?= s3-monitor
 DESCRIPTION := S3 Backup Notifier
 ###############################################
 
