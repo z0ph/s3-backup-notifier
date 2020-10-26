@@ -1,4 +1,4 @@
-name: "deploy s3-backup-notifier"
+name: "GhA - Deploy s3-backup-notifier"
 
 on: 
   push:

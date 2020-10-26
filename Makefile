@@ -4,12 +4,9 @@ help:
 	@echo "${PROJECT}"
 	@echo "${DESCRIPTION}"
 	@echo ""
-	@echo "	layer - prepare the layer"
 	@echo "	package - prepare the package"
 	@echo "	deploy - deploy the lambda function"
 	@echo "	clean - clean the build folder"
-	@echo "	clean-layer - clean the layer folder"
-	@echo "	cleaning - clean build and layer folders"
 
 ################## Project ####################
 PROJECT ?= zoph-s3monitor
@@ -58,28 +55,6 @@ deploy:
 				AWSREGION=${AWS_REGION} \
 			--no-fail-on-empty-changeset
 
-layer: clean-layer
-	mkdir -p layer
-	pip3 install \
-			--isolated \
-			--disable-pip-version-check \
-			-Ur ./python/requirements.txt -t ./layer/
-
-clean-layer:
-	@rm -fr layer/
-	@rm -fr dist/
-	@rm -fr htmlcov/
-	@rm -fr site/
-	@rm -fr .eggs/
-	@rm -fr .tox/
-	@find . -name '*.egg-info' -exec rm -fr {} +
-	@find . -name '.DS_Store' -exec rm -fr {} +
-	@find . -name '*.egg' -exec rm -f {} +
-	@find . -name '*.pyc' -exec rm -f {} +
-	@find . -name '*.pyo' -exec rm -f {} +
-	@find . -name '*~' -exec rm -f {} +
-	@find . -name '__pycache__' -exec rm -fr {} +
-
 clean:
 	@rm -fr build/
 	@rm -fr dist/
@@ -94,8 +69,6 @@ clean:
 	@find . -name '*.pyo' -exec rm -f {} +
 	@find . -name '*~' -exec rm -f {} +
 	@find . -name '__pycache__' -exec rm -fr {} +
-
-cleaning: clean clean-layer
 
 tear-down:
 	@read -p "Are you sure that you want to destroy stack '${PROJECT}-${ENV}'? [y/N]: " sure && [ $${sure:-N} = 'y' ]

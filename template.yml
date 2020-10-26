@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
-Description: Provision the AWS Lambda function of s3-monitor
+Description: Provision the AWS Lambda function of s3-monitor - https://zoph.io
 ###########################################################
 Parameters:
 ###########################################################
@@ -39,14 +39,12 @@ Resources:
     Type: 'AWS::Serverless::Function'
     Properties:
       FunctionName: !Sub s3-monitor-${ENV}
-      Description: !Sub S3 Backup Monitor (${PROJECT})
+      Description: !Sub S3 Backup Monitor (${PROJECT}) - https://zoph.io
       Handler: handlers.main
       Runtime: python3.8
       CodeUri: ./python
       MemorySize: 128
       Timeout: 30
-      Layers:
-        - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:boto3-layer:15'
       Environment:
         Variables:
           MONITORINGBUCKET: !Ref MONITORINGBUCKET
@@ -78,16 +76,41 @@ Resources:
         Monitoring_Bucket_Name: !Ref MONITORINGBUCKET
         Region: !Ref AWSREGION
 
-  # boto3layer:
-  #   Type: 'AWS::Serverless::LayerVersion'
-  #   Properties:
-  #     LayerName: boto3-layer
-  #     Description: boto3 and botocore layer
-  #     ContentUri: ./layer
-  #     CompatibleRuntimes:
-  #       - python2.7
-  #       - python3.6
-  #       - python3.7
-  #       - python3.8
-  #     LicenseInfo: 'Available under the MIT-0 license.'
-  #     RetentionPolicy: Retain
+  CloudWatchLogsMetricsFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties: 
+      FilterPattern: 'ERROR'
+      LogGroupName: !Sub "/aws/lambda/${PROJECT}-${ENV}"
+      MetricTransformations: 
+        -
+          MetricValue: "1"
+          MetricNamespace: !Sub "${PROJECT}-${ENV}"
+          MetricName: "ERROR"
+          DefaultValue: 0
+
+  ErrorAlarm:
+      Type: "AWS::CloudWatch::Alarm"
+      Properties:
+        ActionsEnabled: true
+        AlarmActions:
+          - !Ref AlertingTopic
+        AlarmDescription: !Sub >
+          Alarm for ERROR on ${PROJECT} Lambda function
+        ComparisonOperator: GreaterThanOrEqualToThreshold
+        EvaluationPeriods: 1
+        MetricName: ERROR
+        Namespace: !Sub "${PROJECT}-${ENV}"
+        OKActions:
+          - !Ref AlertingTopic
+        Period: 10
+        Statistic: Sum
+        Threshold: 1
+        TreatMissingData: ignore
+
+  AlertingTopic:
+    Type: "AWS::SNS::Topic"
+    Properties:
+      DisplayName: !Sub "Alarm Topic for ${PROJECT}"
+      Subscription:
+        - Protocol: email
+          Endpoint: !Select [0, !Split [" ", !Ref RECIPIENTS]]
