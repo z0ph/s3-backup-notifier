@@ -81,7 +81,6 @@ Resources:
     Properties: 
       FilterPattern: 'ERROR'
       LogGroupName: !Sub "/aws/lambda/${PROJECT}-${ENV}"
-      /aws/lambda/s3-monitor-dev
       MetricTransformations: 
         -
           MetricValue: "1"
