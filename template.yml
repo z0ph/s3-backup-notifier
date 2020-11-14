@@ -1,9 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
 Description: Provision the AWS Lambda function of s3-monitor - https://zoph.io
-###########################################################
+############################################################
 Parameters:
-###########################################################
+############################################################
   ENV:
     Type: String
     Default: dev
