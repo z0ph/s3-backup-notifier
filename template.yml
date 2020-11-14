@@ -33,6 +33,10 @@ Parameters:
     Default: no_sender_defined@domain.com
     Description: Sender email addresses
 ###########################################################
+Conditions:
+###########################################################
+  IsProdEnvironment: !Equals [ !Ref ENV, prod ]
+###########################################################
 Resources:
 ###########################################################
   s3monitor:
@@ -69,6 +73,7 @@ Resources:
           Type: Schedule
           Properties:
             Name: !Sub s3-monitor-schedule-${ENV}
+            Enabled: !If [IsProdEnvironment, True, False]
             Schedule: cron(0 4 * * ? *)
       Tags:
         Project: !Ref PROJECT
