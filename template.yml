@@ -32,6 +32,10 @@ Parameters:
     Type: String
     Default: no_sender_defined@domain.com
     Description: Sender email addresses
+  CRONENABLED:
+    Type: String
+    Default: true
+    Description: Enable Schedule or not
 ###########################################################
 Conditions:
 ###########################################################
@@ -73,7 +77,7 @@ Resources:
           Type: Schedule
           Properties:
             Name: !Sub s3-monitor-schedule-${ENV}
-            Enabled: 'false' #!If [IsProdEnvironment, true, false]
+            Enabled: !Ref 
             Schedule: cron(0 4 * * ? *)
       Tags:
         Project: !Ref PROJECT
