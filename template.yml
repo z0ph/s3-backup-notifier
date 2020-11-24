@@ -77,7 +77,7 @@ Resources:
           Type: Schedule
           Properties:
             Name: !Sub s3-monitor-schedule-${ENV}
-            Enabled: !Ref 
+            Enabled: !Ref CRONENABLED
             Schedule: cron(0 4 * * ? *)
       Tags:
         Project: !Ref PROJECT
