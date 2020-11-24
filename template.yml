@@ -73,7 +73,7 @@ Resources:
           Type: Schedule
           Properties:
             Name: !Sub s3-monitor-schedule-${ENV}
-            Enabled: false #!If [IsProdEnvironment, true, false]
+            Enabled: 'false' #!If [IsProdEnvironment, true, false]
             Schedule: cron(0 4 * * ? *)
       Tags:
         Project: !Ref PROJECT
