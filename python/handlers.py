@@ -7,7 +7,7 @@ from botocore.exceptions import ClientError
 # Config
 bucker_name = os.environ['MONITORINGBUCKET']
 s3_prefix = os.environ['S3PREFIX']
-recipients = os.environ['RECIPIENTS'].split()
+recipients = os.environ['RECIPIENTS']
 subject = 'S3 Backup Notifier - Backup Failed ❌'
 sender = "S3 Backup Notifier <" + os.environ['SENDER'] + ">"
 aws_region = os.environ['AWSREGION']
@@ -85,7 +85,7 @@ def notification(file_date, file_name, file_size):
         response = ses.send_email(
             Destination={
                 'ToAddresses': [
-                    recipients,
+                    str(recipients),
                 ],
             },
             Message={
