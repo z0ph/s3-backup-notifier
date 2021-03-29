@@ -34,7 +34,7 @@ Parameters:
     Description: Sender email addresses
   CRONENABLED:
     Type: String
-    Default: true
+    Default: ENABLED
     Description: Enable Schedule or not
 ###########################################################
 Conditions:

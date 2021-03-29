@@ -5,6 +5,9 @@ on:
     branches:
     - dev
 
+env:
+  schedule: 'DISABLED'
+
 jobs:
   aws_sam:
     runs-on: ubuntu-latest
@@ -41,7 +44,7 @@ jobs:
               --s3-bucket ${{ secrets.PROJECT }}-artifacts \
               --region ${{ secrets.REGION }} \
               --no-fail-on-empty-changeset \
-              --parameter-overrides ENV=dev MONITORINGBUCKET=${{ secrets.MONITORINGBUCKET }} S3PREFIX=${{ secrets.S3PREFIX }} PROJECT=${{ secrets.PROJECT }} RECIPIENTS=${{ secrets.RECIPIENTS }} SENDER=${{ secrets.SENDER }} AWSREGION=${{ secrets.REGION }} CRONENABLED=false --capabilities CAPABILITY_IAM
+              --parameter-overrides ENV=dev MONITORINGBUCKET=${{ secrets.MONITORINGBUCKET }} S3PREFIX=${{ secrets.S3PREFIX }} PROJECT=${{ secrets.PROJECT }} RECIPIENTS=${{ secrets.RECIPIENTS }} SENDER=${{ secrets.SENDER }} AWSREGION=${{ secrets.REGION }} CRONENABLED=${{ env.schedule }} --capabilities CAPABILITY_IAM
 
       - name: pull-request
         uses: repo-sync/pull-request@v2
