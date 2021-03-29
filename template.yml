@@ -1,9 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
 Description: Provision the AWS Lambda function of s3-monitor - https://zoph.io
-###########################################################
+############################################################
 Parameters:
-###########################################################
+############################################################
   ENV:
     Type: String
     Default: dev
@@ -32,6 +32,10 @@ Parameters:
     Type: String
     Default: no_sender_defined@domain.com
     Description: Sender email addresses
+  CRONENABLED:
+    Type: String
+    Default: ENABLED
+    Description: Enable Schedule or not
 ###########################################################
 Conditions:
 ###########################################################
@@ -68,19 +72,39 @@ Resources:
               Action:
                 - ses:SendEmail
               Resource: '*'
-      Events:
-        Timer:
-          Type: Schedule
-          Properties:
-            Name: !Sub s3-monitor-schedule-${ENV}
-            Enabled: !If [IsProdEnvironment, True, False]
-            Schedule: cron(0 4 * * ? *)
+      # Events:
+      #   Timer:
+      #     Type: Schedule
+      #     Properties:
+      #       Name: !Sub s3-monitor-schedule-${ENV}
+      #       Enabled: !Ref CRONENABLED
+      #       Schedule: cron(0 4 * * ? *)
       Tags:
         Project: !Ref PROJECT
         Environment: !Ref ENV
         MonitoredBucketName: !Ref MONITORINGBUCKET
         Region: !Ref AWSREGION
         Reference: 'https://zoph.io'
+
+  LambdaSchedule:
+        Type: AWS::Events::Rule
+        Properties:
+          State: !Ref CRONENABLED
+          ScheduleExpression: cron(0 4 * * ? *)
+          Description: !Sub Lambda Schedule for ${PROJECT}
+          Targets:
+          - Id: s3-monitor-event-schedule
+            Arn:
+              Fn::GetAtt:
+              - s3monitor
+              - Arn
+
+  InvokConfig:
+      Type: AWS::Lambda::EventInvokeConfig
+      Properties: 
+        FunctionName: !Ref s3monitor
+        Qualifier: $LATEST
+        MaximumRetryAttempts: 0
 
   CloudWatchLogsMetricsFilter:
     Type: AWS::Logs::MetricFilter
@@ -120,3 +144,7 @@ Resources:
       Subscription:
         - Protocol: email
           Endpoint: !Select [0, !Split [" ", !Ref RECIPIENTS]]
+
+Outputs:
+  IsProdEnv:
+    Value: !If [IsProdEnvironment, true, false]
