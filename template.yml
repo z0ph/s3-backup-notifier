@@ -86,12 +86,12 @@ Resources:
         Region: !Ref AWSREGION
         Reference: 'https://zoph.io'
 
-    LambdaSchedule:
+  LambdaSchedule:
         Type: AWS::Events::Rule
         Properties:
           State: !Ref CRONENABLED
           ScheduleExpression: cron(0 4 * * ? *)
-          Description: !Sub Lambda Schedule for ${MONITORINGBUCKET}
+          Description: !Sub Lambda Schedule for ${PROJECT}
           Targets:
           - Id: s3-monitor-event-schedule
             Arn:
@@ -99,7 +99,7 @@ Resources:
               - s3monitor
               - Arn
 
-    InvokConfig:
+  InvokConfig:
       Type: AWS::Lambda::EventInvokeConfig
       Properties: 
         FunctionName: !Ref s3monitor
