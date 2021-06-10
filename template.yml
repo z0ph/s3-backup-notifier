@@ -72,13 +72,6 @@ Resources:
               Action:
                 - ses:SendEmail
               Resource: '*'
-      # Events:
-      #   Timer:
-      #     Type: Schedule
-      #     Properties:
-      #       Name: !Sub s3-monitor-schedule-${ENV}
-      #       Enabled: !Ref CRONENABLED
-      #       Schedule: cron(0 4 * * ? *)
       Tags:
         Project: !Ref PROJECT
         Environment: !Ref ENV
@@ -98,6 +91,15 @@ Resources:
               Fn::GetAtt:
               - s3monitor
               - Arn
+
+  LambdaInvokePermission:
+    # https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CWE_Troubleshooting.html#LAMfunctionNotInvoked
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: !GetAtt s3monitor.Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt LambdaSchedule.Arn
 
   InvokConfig:
       Type: AWS::Lambda::EventInvokeConfig
