@@ -83,7 +83,7 @@ Resources:
         Type: AWS::Events::Rule
         Properties:
           State: !Ref CRONENABLED
-          ScheduleExpression: cron(0 4 * * ? *)
+          ScheduleExpression: cron(30 6 * * ? *)
           Description: !Sub Lambda Schedule for ${PROJECT}
           Targets:
           - Id: s3-monitor-event-schedule
