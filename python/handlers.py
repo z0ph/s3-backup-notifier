@@ -26,7 +26,6 @@ ses = session.client("ses")
 
 # Access the S3 bucket
 bucket = s3.Bucket(bucket_name)
-objs = bucket.objects.filter(Prefix=s3_prefix).all()
 
 
 # Convert to Human Readable
@@ -45,20 +44,28 @@ def main(event, context):
         backup_success = False
         last_backup = None
 
-        for obj in objs:
-            file_date = obj.last_modified.date()
-            file_name = obj.key
-            file_size = sizeof_fmt(obj.size)
-            logger.info(f"Checking file: {file_date} {file_name} {file_size}")
+        # Use paginator to handle large number of files
+        paginator = s3.meta.client.get_paginator("list_objects_v2")
+        for page in paginator.paginate(Bucket=bucket_name, Prefix=s3_prefix):
+            for obj in page.get("Contents", []):
+                file_date = obj["LastModified"].date()
+                file_name = obj["Key"]
+                file_size = sizeof_fmt(obj["Size"])
+                logger.info(f"Checking file: {file_date} {file_name} {file_size}")
 
-            # Keep track of the last backup seen
-            last_backup = (file_date, file_name, file_size)
+                # Keep track of the last backup seen
+                last_backup = (file_date, file_name, file_size)
 
-            if file_date == today:
-                logger.info("Backup OK, All Good")
-                logger.info(f"--> {file_date} {file_name} {file_size}")
-                backup_success = True
-                break  # Exit loop if today's backup is found
+                if file_date == today:
+                    logger.info("Backup OK, All Good")
+                    logger.info(
+                        f"Today's backup found: {file_date} {file_name} {file_size}"
+                    )
+                    backup_success = True
+                    break  # Exit loop if today's backup is found
+
+            if backup_success:
+                break  # Exit outer loop if today's backup is found
 
         if not backup_success:
             if last_backup:
