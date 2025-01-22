@@ -2,40 +2,40 @@
 
 ![Deploy s3-backup-notifier](https://github.com/z0ph/s3-backup-notifier/workflows/Deploy%20s3-backup-notifier/badge.svg?branch=master)
 
-S3 backup notifier intends to `daily` check the last object date in an AWS S3 bucket, and if it's older than today, send alerting email via AWS Simple Email Service (SES).
+S3 Backup Notifier is a serverless application designed to monitor AWS S3 buckets. It checks daily for the latest object in a specified S3 bucket and sends an alert email via AWS Simple Email Service (SES) if no new backup is detected for the current day.
 
-I'm using this to monitor the effectiveness of backup of my home automation systems and be alerted on any failed backup intend.
+## Use Case
 
-## Technical details
+This tool is ideal for monitoring the effectiveness of backup systems, such as home automation systems, and ensuring timely alerts for any failed backup attempts.
 
-> Fully serverless.
+## Technical Details
 
-* Uses AWS Lambda function (Python)
-* Scheduled Lambda (`daily`) using CloudWatch Events
-* Uses AWS Simple Email Service (SES) for Emails Notifications
+- **Serverless Architecture**: Utilizes AWS Lambda functions written in Python.
+- **Scheduled Execution**: Lambda functions are triggered daily using AWS CloudWatch Events.
+- **Email Notifications**: Alerts are sent using AWS Simple Email Service (SES).
 
-Nb: deployment for my own usage is done using Github Actions, you can check the associated [workflow](.github/workflows/main.yml).
+> Note: Deployment for personal use is automated using GitHub Actions. Refer to the associated [workflow](.github/workflows/main.yml).
 
 ## Installation
 
 ### Requirements
 
-* Configure AWS Credentials (prefer [aws-vault](https://github.com/99designs/aws-vault))
-* Create a bucket called: `<project_name>-artifacts` (Prefer versioned and encrypted)
+- **AWS Credentials**: Configure your AWS credentials. It's recommended to use [aws-vault](https://github.com/99designs/aws-vault) for secure storage.
+- **S3 Bucket**: Create a bucket named `<project_name>-artifacts`. It's advisable to enable versioning and encryption for security.
 
-> Its using [AWS Serverless Application Model (SAM)](https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md)
+> The project uses the [AWS Serverless Application Model (SAM)](https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md) for deployment.
 
 ### :woman_factory_worker: Build & Deploy
 
-Build AWS Lambda function package.
+#### Build AWS Lambda Function Package
 
 ```bash
 $ make package
 ```
 
-#### Deploy CloudFormation stack
+#### Deploy CloudFormation Stack
 
-> Nb: RECIPIENTS var is space-separated
+> Note: The `RECIPIENTS` variable should be space-separated.
 
 ```bash
 $ make deploy \
@@ -50,7 +50,7 @@ $ make deploy \
 
 ### Cleaning
 
-Remove unused folders and files after the deployment of your stack.
+Remove unused folders and files after deploying your stack.
 
 ```bash
 $ make clean
@@ -58,6 +58,16 @@ $ make clean
 
 ### Destroy Stack
 
+To remove the deployed stack, use the following command:
+
 ```bash
 $ make tear-down
 ```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

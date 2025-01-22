@@ -1,17 +1,18 @@
 name: "[DEV] GhA - Deploy s3-backup-notifier"
 
-on: 
+on:
   push:
     branches:
-    - dev
+      - dev
 
 env:
-  schedule: 'DISABLED'
+  schedule: "DISABLED"
 
 jobs:
   aws_sam:
     runs-on: ubuntu-latest
     steps:
+      # Configure AWS credentials
       - name: Assume Role
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -22,20 +23,23 @@ jobs:
           role-duration-seconds: 1200
           role-session-name: GH-Actions
 
+      # Checkout the repository
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
 
+      # Test AWS credentials
       - name: Test credentials - whoami
-        run: |
-          aws sts get-caller-identity
+        run: aws sts get-caller-identity
 
+      # Build the SAM application
       - name: sam build
-        uses: TractorZoom/sam-cli-action@master
+        uses: TractorZoom/sam-cli-action@v1.0.0
         with:
           sam_command: build -b ./build
 
+      # Deploy the SAM application
       - name: sam deploy
-        uses: TractorZoom/sam-cli-action@master
+        uses: TractorZoom/sam-cli-action@v1.0.0
         with:
           sam_command: |
             deploy \
@@ -44,8 +48,18 @@ jobs:
               --s3-bucket ${{ secrets.PROJECT }}-artifacts \
               --region ${{ secrets.REGION }} \
               --no-fail-on-empty-changeset \
-              --parameter-overrides ENV=dev MONITORINGBUCKET=${{ secrets.MONITORINGBUCKET }} S3PREFIX=${{ secrets.S3PREFIX }} PROJECT=${{ secrets.PROJECT }} RECIPIENTS=${{ secrets.RECIPIENTS }} SENDER=${{ secrets.SENDER }} AWSREGION=${{ secrets.REGION }} CRONENABLED=${{ env.schedule }} --capabilities CAPABILITY_IAM
+              --parameter-overrides \
+                ENV=dev \
+                MONITORINGBUCKET=${{ secrets.MONITORINGBUCKET }} \
+                S3PREFIX=${{ secrets.S3PREFIX }} \
+                PROJECT=${{ secrets.PROJECT }} \
+                RECIPIENTS=${{ secrets.RECIPIENTS }} \
+                SENDER=${{ secrets.SENDER }} \
+                AWSREGION=${{ secrets.REGION }} \
+                CRONENABLED=${{ env.schedule }} \
+              --capabilities CAPABILITY_IAM
 
+      # Create a pull request
       - name: pull-request
         uses: repo-sync/pull-request@v2
         with:
