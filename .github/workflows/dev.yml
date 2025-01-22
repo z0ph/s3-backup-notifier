@@ -33,13 +33,13 @@ jobs:
 
       # Build the SAM application
       - name: sam build
-        uses: TractorZoom/sam-cli-action@v1.0.0
+        uses: TractorZoom/sam-cli-action@latest
         with:
           sam_command: build -b ./build
 
       # Deploy the SAM application
       - name: sam deploy
-        uses: TractorZoom/sam-cli-action@v1.0.0
+        uses: TractorZoom/sam-cli-action@latest
         with:
           sam_command: |
             deploy \

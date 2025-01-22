@@ -5,8 +5,8 @@ import logging
 from botocore.exceptions import ClientError
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 # Config
 bucket_name = os.environ.get("MONITORINGBUCKET")
@@ -43,11 +43,16 @@ def main(event, context):
     """Main function to check for today's backup and send notifications if missing."""
     try:
         backup_success = False
+        last_backup = None
+
         for obj in objs:
             file_date = obj.last_modified.date()
             file_name = obj.key
             file_size = sizeof_fmt(obj.size)
             logger.info(f"Checking file: {file_date} {file_name} {file_size}")
+
+            # Keep track of the last backup seen
+            last_backup = (file_date, file_name, file_size)
 
             if file_date == today:
                 logger.info("Backup OK, All Good")
@@ -56,8 +61,18 @@ def main(event, context):
                 break  # Exit loop if today's backup is found
 
         if not backup_success:
-            logger.warning("No backup detected from today")
-            notification(file_date=file_date, file_name=file_name, file_size=file_size)
+            if last_backup:
+                logger.warning("No backup detected from today")
+                notification(
+                    file_date=last_backup[0],
+                    file_name=last_backup[1],
+                    file_size=last_backup[2],
+                )
+            else:
+                logger.error("No backups found in bucket")
+                notification(
+                    file_date="No backups", file_name="No files", file_size="0B"
+                )
 
     except ClientError as e:
         error_code = e.response["Error"]["Code"]
