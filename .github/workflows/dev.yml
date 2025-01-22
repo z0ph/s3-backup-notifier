@@ -33,15 +33,15 @@ jobs:
 
       # Build the SAM application
       - name: sam build
-        uses: TractorZoom/sam-cli-action@latest
+        uses: aws-actions/aws-sam-cli-action@v1
         with:
-          sam_command: build -b ./build
+          args: build -b ./build
 
       # Deploy the SAM application
       - name: sam deploy
-        uses: TractorZoom/sam-cli-action@latest
+        uses: aws-actions/aws-sam-cli-action@v1
         with:
-          sam_command: |
+          args: |
             deploy \
               --template-file build/template.yaml \
               --stack-name ${{ secrets.PROJECT }}-dev \
