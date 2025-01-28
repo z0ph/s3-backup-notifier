@@ -1,12 +1,10 @@
-# S3 Backup Notifier :envelope:
+# S3 Backup Notifier
 
-![Deploy s3-backup-notifier](https://github.com/z0ph/s3-backup-notifier/workflows/Deploy%20s3-backup-notifier/badge.svg?branch=master)
-
-S3 Backup Notifier is a serverless application designed to monitor AWS S3 buckets. It checks daily for the latest object in a specified S3 bucket and sends an alert email via AWS Simple Email Service (SES) if no new backup is detected for the current day.
+S3 Backup Notifier is a serverless application designed to monitor a specific prefix in Amazon S3 buckets. It checks daily for the latest object in a specified S3 bucket and sends an alert email via AWS Simple Email Service (SES) if no new backup is detected for the current day.
 
 ## Use Case
 
-This tool is ideal for monitoring the effectiveness of backup systems, such as home automation systems, and ensuring timely alerts for any failed backup attempts.
+This tool is ideal for monitoring the effectiveness of backup systems, such as home automation systems, and ensuring timely alerts for any failed backup attempts from outside.
 
 ## Technical Details
 
