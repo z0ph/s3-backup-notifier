@@ -1,0 +1,27 @@
+[project]
+name = "s3-monitor"
+version = "0.2.0"
+description = "S3 Backup Notifier - daily Lambda check for fresh S3 backups"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "z0ph", url = "https://zoph.io" }]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = [".aws-sam", "build", "sam-template"]
+
+[tool.ruff.lint]
+select = [
+  "E",  # pycodestyle errors
+  "W",  # pycodestyle warnings
+  "F",  # pyflakes
+  "I",  # isort
+  "B",  # flake8-bugbear
+  "UP", # pyupgrade
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["python"]
+addopts = "-ra"

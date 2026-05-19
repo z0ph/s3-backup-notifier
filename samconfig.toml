@@ -1,0 +1,42 @@
+version = 0.1
+
+[default.global.parameters]
+stack_name = "s3-monitor"
+
+[default.build.parameters]
+cached = true
+parallel = true
+
+[dev.deploy.parameters]
+stack_name        = "s3-monitor-dev"
+region            = "eu-west-1"
+resolve_s3        = true
+capabilities      = "CAPABILITY_IAM"
+confirm_changeset = false
+fail_on_empty_changeset = false
+parameter_overrides = [
+  "ENV=dev",
+  "PROJECT=s3-monitor",
+  "CRONENABLED=DISABLED",
+]
+tags = [
+  "Project=s3-monitor",
+  "Environment=dev",
+]
+
+[prod.deploy.parameters]
+stack_name        = "s3-monitor-prod"
+region            = "eu-west-1"
+resolve_s3        = true
+capabilities      = "CAPABILITY_IAM"
+confirm_changeset = false
+fail_on_empty_changeset = false
+parameter_overrides = [
+  "ENV=prod",
+  "PROJECT=s3-monitor",
+  "CRONENABLED=ENABLED",
+]
+tags = [
+  "Project=s3-monitor",
+  "Environment=prod",
+]
