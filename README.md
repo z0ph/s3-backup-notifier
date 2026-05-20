@@ -1,71 +1,63 @@
-# S3 Backup Notifier
+# s3-monitor
 
-S3 Backup Notifier is a serverless application designed to monitor a specific prefix in Amazon S3 buckets. It checks daily for the latest object in a specified S3 bucket and sends an alert email via AWS Simple Email Service (SES) if no new backup is detected for the current day.
+`s3-monitor` is a small serverless app that checks an S3 prefix once a day and emails you (via SES) if the most recent object under that prefix is not from today. Useful for backup-freshness alerting (home automation snapshots, database dumps, etc.).
 
-## Use Case
+## How it works
 
-This tool is ideal for monitoring the effectiveness of backup systems, such as home automation systems, and ensuring timely alerts for any failed backup attempts from outside.
+- A single AWS Lambda function (Python 3.12, arm64) lists the configured bucket/prefix and finds the object with the most recent `LastModified` timestamp.
+- If that date is **today**, it stays silent.
+- If it is **stale** or there are **no objects at all**, it sends an SES email to the configured recipient list.
+- A CloudWatch alarm on the function's `ERROR` log lines publishes to an SNS topic so a single on-call address gets paged if the function itself fails.
+- A daily EventBridge schedule (via SAM's `Schedule` event) triggers the function. The schedule can be disabled per environment via the `CRONENABLED` parameter.
 
-## Technical Details
+## Requirements
 
-- **Serverless Architecture**: Utilizes AWS Lambda functions written in Python.
-- **Scheduled Execution**: Lambda functions are triggered daily using AWS CloudWatch Events.
-- **Email Notifications**: Alerts are sent using AWS Simple Email Service (SES).
+- AWS account with **SES** in production mode (or sandbox if `SENDER` and all `RECIPIENTS` are verified).
+- AWS CLI v2 and [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html) installed locally.
+- Python 3.12 (for tests/lint only; the runtime ships its own).
+- Configured AWS credentials. [`aws-vault`](https://github.com/99designs/aws-vault) recommended.
 
-> Note: Deployment for personal use is automated using GitHub Actions. Refer to the associated [workflow](.github/workflows/main.yml).
+## Deploy
 
-## Installation
+The only supported deploy path is SAM. Configuration for the `dev` and `prod` stacks lives in [`samconfig.toml`](samconfig.toml).
 
-### Requirements
+The first time, you'll need to supply the SES-related parameters either via `--parameter-overrides` or by editing `samconfig.toml`. The mandatory parameters are:
 
-- **AWS Credentials**: Configure your AWS credentials. It's recommended to use [aws-vault](https://github.com/99designs/aws-vault) for secure storage.
-- **S3 Bucket**: Create a bucket named `<project_name>-artifacts`. It's advisable to enable versioning and encryption for security.
-
-> The project uses the [AWS Serverless Application Model (SAM)](https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md) for deployment.
-
-### :woman_factory_worker: Build & Deploy
-
-#### Build AWS Lambda Function Package
-
-```bash
-$ make package
-```
-
-#### Deploy CloudFormation Stack
-
-> Note: The `RECIPIENTS` variable should be space-separated.
+| Parameter          | Description                                                       |
+| ------------------ | ----------------------------------------------------------------- |
+| `MONITORINGBUCKET` | The bucket to inspect                                             |
+| `S3PREFIX`         | Key prefix to scope the listing (use empty string for whole bucket) |
+| `SENDER`           | SES-verified sender address                                       |
+| `RECIPIENTS`       | Whitespace-separated list of SES recipient addresses              |
+| `ALERTRECIPIENT`   | Single email subscribed to the function's error SNS topic         |
 
 ```bash
-$ make deploy \
-    PROJECT=<your_project_name> \
-    ENV=<your_env> \
-    MONITORING_BUCKET=<bucket_to_monitor> \
-    S3_PREFIX=<s3_prefix> \
-    SENDER=<sender_email> \
-    RECIPIENTS='<recipient_email1> <recipient_email2>' \
-    AWS_REGION='<your_aws_region>'
+make build
+make deploy ENV=dev \
+  # or: sam deploy --config-env dev \
+  #   --parameter-overrides "MONITORINGBUCKET=..." "SENDER=..." \
+  #                         "RECIPIENTS='a@x b@y'" "ALERTRECIPIENT=ops@x"
 ```
 
-### Cleaning
-
-Remove unused folders and files after deploying your stack.
+To tear a stack down:
 
 ```bash
-$ make clean
+make destroy ENV=dev
 ```
 
-### Destroy Stack
-
-To remove the deployed stack, use the following command:
+## Develop
 
 ```bash
-$ make tear-down
+python3.12 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements-dev.txt
+
+make lint   # ruff check .
+make test   # pytest
 ```
 
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+Tests run against `moto` and do not touch AWS.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT. See [LICENSE](LICENSE).

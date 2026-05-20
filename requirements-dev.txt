@@ -1,0 +1,4 @@
+boto3>=1.34
+moto[s3,ses]>=5.0
+pytest>=8.0
+ruff>=0.6

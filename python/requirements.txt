@@ -1,0 +1,3 @@
+# Runtime dependencies for the Lambda package.
+# boto3/botocore are provided by the Lambda Python 3.12 runtime, so we don't
+# vendor them here. Add any extra runtime deps below.
