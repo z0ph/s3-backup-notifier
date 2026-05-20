@@ -58,21 +58,6 @@ make test   # pytest
 
 Tests run against `moto` and do not touch AWS.
 
-## CI/CD
-
-[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) runs `ruff` + `pytest` on every push and PR, then deploys on push to `dev` (→ dev environment) or `master` (→ prod environment). Authentication to AWS is **OIDC-only** via `aws-actions/configure-aws-credentials`; no static keys.
-
-Required GitHub Actions secrets per environment:
-
-- `ROLE_TO_ASSUME` - IAM role ARN with a trust policy for the GitHub OIDC provider
-- `REGION`
-- `PROJECT`
-- `MONITORINGBUCKET`
-- `S3PREFIX`
-- `SENDER`
-- `RECIPIENTS`
-- `ALERTRECIPIENT`
-
 ## License
 
 MIT. See [LICENSE](LICENSE).
